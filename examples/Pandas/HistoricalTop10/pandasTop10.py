@@ -36,13 +36,16 @@ def readPlayers(dirname):
                        
 print(sys.argv[1])
 ranks = readAllFiles(sys.argv[1])
-ranks = ranks[(ranks[1]<10)]
+ranks = ranks[(ranks[1]<=10)]
 #print ranks
 players = readPlayers(sys.argv[1])
 plRanks = ranks.merge(players,right_on=0,left_on=2)
-print(ranks)
-#plRanks["B"] = plRanks["0_x"] - plRanks[4]
-#plRanks["B"] = plRanks["B"].astype(int) / (365*24*3600*1000000000.0)
-#agg = plRanks[["0_x","B"]].groupby("0_x")
-
-#agg.mean().to_csv("top100ages.csv")
+#result = plRanks[['0_x','1_x','2_y','3_x']]
+result = plRanks[['2_y','1_x','3_x', '0_x']]
+result.columns = ['name','type','value','date']
+result.value = pd.to_numeric(result.value)
+print(result.dtypes)
+result = result[(result.value>0)]
+result = result.sort_values(by=['date', 'type'])
+print(result)
+result.to_csv("has0score.csv", index=False)
